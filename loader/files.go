@@ -12,7 +12,7 @@ import (
 const FilenameExtension = ".enc"
 
 // encoding standard
-// | file_name_length (4byte) | file_name | data ..... |
+// | file_name_length (4 bytes) | file_name | data ..... |
 func OpenFile(filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {

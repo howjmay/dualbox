@@ -3,10 +3,19 @@ package pack
 import (
 	"crypto/rand"
 	"dualbox/crypt"
+	"os"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 )
+
+func init() {
+	logrus.SetFormatter(&logrus.TextFormatter{})
+	logrus.SetOutput(os.Stdout)
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetReportCaller(true)
+}
 
 func Test_PackUnpack(t *testing.T) {
 	cpt := crypt.NewCrypter(crypt.CRYPTO_TYPE_GCM_AES256)

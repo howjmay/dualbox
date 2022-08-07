@@ -1,3 +1,3 @@
 # dualbox
 
-Encrypt your data and decrypt them depends on the input key.
+Encrypt given data all together and decrypt them depends on the given keys.
