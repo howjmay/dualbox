@@ -1,6 +1,8 @@
 package pack
 
-const HeaderSize = 12 + 26
-const ChecksumMsgSize = 2
-const ChecksumMsg = "ok"
+import "dualbox/pkg/crypt"
+
+const HeaderSize = crypt.NonceSize + CheckSumEncryptedSize
+const CheckSumEncryptedSize = 24
+const CheckSumSize = 8
 const ChecksumFromToSize = 4
