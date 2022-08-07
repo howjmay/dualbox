@@ -1,8 +1,8 @@
 package pack
 
 import (
-	"dualbox/pkg/crypt"
-	"dualbox/pkg/utils"
+	"dualbox/crypt"
+	"dualbox/utils"
 	"fmt"
 )
 

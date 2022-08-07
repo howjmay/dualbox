@@ -1,9 +1,9 @@
 package main
 
 import (
-	"dualbox/pkg/crypt"
-	"dualbox/pkg/loader"
-	"dualbox/pkg/pack"
+	"dualbox/crypt"
+	"dualbox/loader"
+	"dualbox/pack"
 	"os"
 	"time"
 

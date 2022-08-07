@@ -1,7 +1,7 @@
 package loader
 
 import (
-	"dualbox/pkg/utils"
+	"dualbox/utils"
 	"io/ioutil"
 	"os"
 	"path"

@@ -1,6 +1,6 @@
 package pack
 
-import "dualbox/pkg/crypt"
+import "dualbox/crypt"
 
 const HeaderSize = crypt.NonceSize + CheckSumEncryptedSize
 const CheckSumEncryptedSize = 24

@@ -2,7 +2,7 @@ package pack
 
 import (
 	"crypto/rand"
-	"dualbox/pkg/crypt"
+	"dualbox/crypt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
