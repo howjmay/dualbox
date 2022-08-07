@@ -1,5 +1,7 @@
 package crypt
 
+import "fmt"
+
 type Crypter interface {
 	GenRandKey(cryptoType CryptoType) []byte
 	Encrypt(key, nonce, plaintext []byte) ([]byte, []byte, error)
@@ -23,6 +25,6 @@ func NewCrypter(cryptoType CryptoType) Crypter {
 	case CRYPTO_TYPE_GCM_AES128, CRYPTO_TYPE_GCM_AES256:
 		return &crypterGCM{}
 	default:
-		return nil
+		panic(fmt.Sprintf("unsupported crypto type: %d", cryptoType))
 	}
 }
