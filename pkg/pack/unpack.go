@@ -4,8 +4,6 @@ import (
 	"dualbox/pkg/crypt"
 	"dualbox/pkg/utils"
 	"fmt"
-
-	"github.com/sirupsen/logrus"
 )
 
 func Unpack(cpt crypt.Crypter, buf, key []byte) ([]byte, error) {
@@ -21,7 +19,7 @@ func Unpack(cpt crypt.Crypter, buf, key []byte) ([]byte, error) {
 		to := utils.BytesToUint32(dechecksum0[+ChecksumFromToSize : +2*ChecksumFromToSize])
 		plaintext, err := cpt.Decrypt(key, nonce0, buf[from:to])
 		if err != nil {
-			logrus.Fatal(err)
+			return nil, fmt.Errorf("can't decrypt cipher0: %w", err)
 		}
 		return plaintext, nil
 	}
@@ -31,10 +29,10 @@ func Unpack(cpt crypt.Crypter, buf, key []byte) ([]byte, error) {
 		to := utils.BytesToUint32(dechecksum1[+ChecksumFromToSize : +2*ChecksumFromToSize])
 		plaintext, err := cpt.Decrypt(key, nonce1, buf[from:to])
 		if err != nil {
-			logrus.Fatal(err)
+			return nil, fmt.Errorf("can't decrypt cipher1: %w", err)
 		}
 		return plaintext, nil
 	}
 
-	return nil, fmt.Errorf("nothing")
+	return nil, fmt.Errorf("none of the keys match")
 }

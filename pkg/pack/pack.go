@@ -3,8 +3,7 @@ package pack
 import (
 	"dualbox/pkg/crypt"
 	"dualbox/pkg/utils"
-
-	"github.com/sirupsen/logrus"
+	"fmt"
 )
 
 func Pack(cpt crypt.Crypter, key0, key1, nonce0, nonce1, cipher0, cipher1 []byte) ([]byte, error) {
@@ -15,7 +14,7 @@ func Pack(cpt crypt.Crypter, key0, key1, nonce0, nonce1, cipher0, cipher1 []byte
 	copy(buf0[ChecksumFromToSize:], utils.Uint32ToBytes(uint32(to0)))
 	checksum0, _, err := cpt.Encrypt(key0, nonce0, buf0)
 	if err != nil {
-		logrus.Fatal(err)
+		return nil, fmt.Errorf("can't encrypt checksum0: %w", err)
 	}
 
 	from1 := to0
@@ -25,7 +24,7 @@ func Pack(cpt crypt.Crypter, key0, key1, nonce0, nonce1, cipher0, cipher1 []byte
 	copy(buf1[ChecksumFromToSize:], utils.Uint32ToBytes(uint32(to1)))
 	checksum1, _, err := cpt.Encrypt(key1, nonce1, buf1)
 	if err != nil {
-		logrus.Fatal(err)
+		return nil, fmt.Errorf("can't encrypt checksum1: %w", err)
 	}
 
 	ret := make([]byte, to1)
