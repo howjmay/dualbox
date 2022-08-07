@@ -13,7 +13,7 @@ const FilenameExtension = ".enc"
 
 // encoding standard
 // | file_name_length (4 bytes) | file_name | data ..... |
-func OpenFile(filePath string) ([]byte, error) {
+func OpenPlainFile(filePath string) ([]byte, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		logrus.Fatal(err)
@@ -32,14 +32,16 @@ func OpenFile(filePath string) ([]byte, error) {
 }
 
 func WriteFile(newName string, b []byte) error {
-	nameLen := utils.BytesToUint32(b[:4])
 	var name string
+	var data []byte
 	if newName == "" {
+		nameLen := utils.BytesToUint32(b[:4])
 		name = string(b[4 : 4+nameLen])
+		data = b[4+nameLen:]
 	} else {
 		name = newName
+		data = b
 	}
-	data := b[4+nameLen:]
 
 	err := os.WriteFile(name, data, 0644)
 	if err != nil {

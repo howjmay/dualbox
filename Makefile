@@ -1,2 +1,2 @@
 clean:
-	rm *.enc
+	rm **/*.enc
