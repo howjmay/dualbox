@@ -17,13 +17,13 @@ $ go install
 To encrypt files run:
 
 ```bash
-$ dualbox enc --file0 <file_path_0> --file1 <file_path_1> --key0 <key_0> --key1 <key_1>
+$ dualbox enc --file0 $FILE_PATH_0 --file1 $FILE_PATH_1 --password0 $PASSWORD_0 --password1 $PASSWORD_1
 ```
 
 To decrypt file run:
 
 ```bash
-$ dualbox dec --file <file_path> --key <key>
+$ dualbox dec --file $FILE_PATH --password $PASSWORD
 ```
 
 To see more command information run:
