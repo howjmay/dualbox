@@ -6,12 +6,44 @@ import (
 	"crypto/rand"
 	"fmt"
 	"io"
+
+	"golang.org/x/crypto/sha3"
 )
 
-type crypterGCM struct{}
+type crypterGCM struct {
+	cryptoType CryptoType
+}
 
-func (c *crypterGCM) GenRandKey(cryptoType CryptoType) []byte {
-	switch cryptoType {
+func (c *crypterGCM) PasswordToKey(pwd string) ([]byte, error) {
+	switch c.cryptoType {
+	case CRYPTO_TYPE_GCM_AES128:
+		h := sha3.New256()
+		_, err := h.Write([]byte(pwd))
+		if err != nil {
+			return nil, err
+		}
+		buf := h.Sum(nil)
+		ret := make([]byte, 16)
+		bufHalfLen := len(buf)
+		for i := 0; i < bufHalfLen; i++ {
+			ret[i] = buf[i] ^ buf[i+bufHalfLen]
+		}
+		return ret, nil
+
+	case CRYPTO_TYPE_GCM_AES256:
+		h := sha3.New256()
+		_, err := h.Write([]byte(pwd))
+		if err != nil {
+			return nil, err
+		}
+		return h.Sum(nil), nil
+	default:
+		panic(fmt.Sprintf("unsupported crypto type: %d", c.cryptoType))
+	}
+}
+
+func (c *crypterGCM) GenRandKey() []byte {
+	switch c.cryptoType {
 	case CRYPTO_TYPE_GCM_AES128:
 		key := make([]byte, 16)
 		rand.Read(key)
@@ -21,7 +53,7 @@ func (c *crypterGCM) GenRandKey(cryptoType CryptoType) []byte {
 		rand.Read(key)
 		return key
 	default:
-		panic(fmt.Sprintf("unsupported crypto type: %d", cryptoType))
+		panic(fmt.Sprintf("unsupported crypto type: %d", c.cryptoType))
 	}
 }
 

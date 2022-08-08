@@ -3,7 +3,8 @@ package crypt
 import "fmt"
 
 type Crypter interface {
-	GenRandKey(cryptoType CryptoType) []byte
+	PasswordToKey(pwd string) ([]byte, error)
+	GenRandKey() []byte
 	Encrypt(key, nonce, plaintext []byte) ([]byte, []byte, error)
 	Decrypt(key, nonce, ciphertext []byte) ([]byte, error)
 }
@@ -23,7 +24,9 @@ type CryptoType int
 func NewCrypter(cryptoType CryptoType) Crypter {
 	switch cryptoType {
 	case CRYPTO_TYPE_GCM_AES128, CRYPTO_TYPE_GCM_AES256:
-		return &crypterGCM{}
+		return &crypterGCM{
+			cryptoType: cryptoType,
+		}
 	default:
 		panic(fmt.Sprintf("unsupported crypto type: %d", cryptoType))
 	}

@@ -15,6 +15,17 @@ func Test_enc(t *testing.T) {
 	path := filepath.Dir(filename)
 	filePath0 := path + "/../testdata/testdata0.jpg"
 	filePath1 := path + "/../testdata/testdata1.png"
-	err := enc([]string{filePath0, filePath1}, []string{key0, key1}, "test.enc")
+	err := enc([]string{filePath0, filePath1}, []string{key0, key1}, nil, "test.enc")
+	require.NoError(t, err)
+}
+
+func Test_enc_pwd(t *testing.T) {
+	pwd0 := "moon"
+	pwd1 := "sun"
+	_, filename, _, _ := runtime.Caller(0)
+	path := filepath.Dir(filename)
+	filePath0 := path + "/../testdata/testdata0.jpg"
+	filePath1 := path + "/../testdata/testdata1.png"
+	err := enc([]string{filePath0, filePath1}, nil, []string{pwd0, pwd1}, "test.enc")
 	require.NoError(t, err)
 }

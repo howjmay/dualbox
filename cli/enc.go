@@ -17,6 +17,7 @@ import (
 func Enc() *cli.Command {
 	var filePaths [2]string
 	var keys [2]string
+	var pwds [2]string
 	var keyFilePath string
 	var output string
 	return &cli.Command{
@@ -30,7 +31,8 @@ func Enc() *cli.Command {
 				}
 				copy(keys[:], _keys)
 			}
-			return enc(filePaths[:], keys[:], output)
+
+			return enc(filePaths[:], keys[:], pwds[:], output)
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -60,6 +62,18 @@ func Enc() *cli.Command {
 				Destination: &keys[1],
 			},
 			&cli.StringFlag{
+				Name:        "password0",
+				Aliases:     []string{"p0", "pwd0"},
+				Usage:       "password for file in index 0",
+				Destination: &pwds[0],
+			},
+			&cli.StringFlag{
+				Name:        "password1",
+				Aliases:     []string{"p1", "pwd1"},
+				Usage:       "password for file in index 1",
+				Destination: &pwds[1],
+			},
+			&cli.StringFlag{
 				Name:        "key-file",
 				Aliases:     []string{"kf"},
 				Usage:       "provide encryption keys by yaml file",
@@ -75,8 +89,34 @@ func Enc() *cli.Command {
 	}
 }
 
-func enc(filePaths []string, keys []string, output string) error {
+func enc(filePaths, keys, pwds []string, output string) error {
+	var err error
+	var key0, key1 []byte
 	cpt := crypt.NewCrypter(crypt.CRYPTO_TYPE_GCM_AES256)
+
+	if pwds[0] != "" {
+		key0, err = cpt.PasswordToKey(pwds[0])
+		if err != nil {
+			return fmt.Errorf("failed to convert pwd0 to key: %w", err)
+		}
+	} else {
+		key0, err = hex.DecodeString(keys[0])
+		if err != nil {
+			return fmt.Errorf("failed to decode key0 in hex: %w", err)
+		}
+	}
+
+	if pwds[1] != "" {
+		key1, err = cpt.PasswordToKey(pwds[1])
+		if err != nil {
+			return fmt.Errorf("failed to convert pwd1 to key: %w", err)
+		}
+	} else {
+		key1, err = hex.DecodeString(keys[1])
+		if err != nil {
+			return fmt.Errorf("failed to decode key1 in hex: %w", err)
+		}
+	}
 
 	b0, err := loader.OpenPlainFile(filePaths[0])
 	if err != nil {
@@ -86,15 +126,6 @@ func enc(filePaths []string, keys []string, output string) error {
 	b1, err := loader.OpenPlainFile(filePaths[1])
 	if err != nil {
 		return fmt.Errorf("failed to open file1: %w", err)
-	}
-
-	key0, err := hex.DecodeString(keys[0])
-	if err != nil {
-		return fmt.Errorf("failed to decode key0 in hex: %w", err)
-	}
-	key1, err := hex.DecodeString(keys[1])
-	if err != nil {
-		return fmt.Errorf("failed to decode key1 in hex: %w", err)
 	}
 
 	c0, n0, err := cpt.Encrypt(key0, nil, b0)
