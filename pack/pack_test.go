@@ -25,8 +25,8 @@ func Test_PackUnpack(t *testing.T) {
 	b1 := make([]byte, 40)
 	rand.Read(b1)
 
-	key0 := cpt.GenRandKey(crypt.CRYPTO_TYPE_GCM_AES256)
-	key1 := cpt.GenRandKey(crypt.CRYPTO_TYPE_GCM_AES256)
+	key0 := cpt.GenRandKey()
+	key1 := cpt.GenRandKey()
 	c0, n0, err := cpt.Encrypt(key0, nil, b0)
 	require.NoError(t, err)
 	c1, n1, err := cpt.Encrypt(key1, nil, b1)

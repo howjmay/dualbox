@@ -15,11 +15,12 @@ import (
 func Dec() *cli.Command {
 	var filePath string
 	var key string
+	var pwd string
 	return &cli.Command{
 		Name:  "dec",
 		Usage: "decrypt file with given key",
 		Action: func(ctx *cli.Context) error {
-			return dec(filePath, key)
+			return dec(filePath, key, pwd)
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -34,13 +35,19 @@ func Dec() *cli.Command {
 				Aliases:     []string{"k"},
 				Usage:       "decryption key",
 				Destination: &key,
-				Required:    true,
+			},
+			&cli.StringFlag{
+				Name:        "password",
+				Aliases:     []string{"p", "pwd"},
+				Usage:       "decryption password",
+				Destination: &pwd,
 			},
 		},
 	}
 }
 
-func dec(filePath string, keyRaw string) error {
+func dec(filePath, keyRaw, pwd string) error {
+	var key []byte
 	cpt := crypt.NewCrypter(crypt.CRYPTO_TYPE_GCM_AES256)
 
 	f, err := os.Open(filePath)
@@ -53,9 +60,16 @@ func dec(filePath string, keyRaw string) error {
 		return fmt.Errorf("failed to read file: %s: %w", filePath, err)
 	}
 
-	key, err := hex.DecodeString(keyRaw)
-	if err != nil {
-		return fmt.Errorf("failed to decode key in hex: %w", err)
+	if pwd != "" {
+		key, err = cpt.PasswordToKey(pwd)
+		if err != nil {
+			return fmt.Errorf("failed to convert pwd to key: %w", err)
+		}
+	} else {
+		key, err = hex.DecodeString(keyRaw)
+		if err != nil {
+			return fmt.Errorf("failed to decode key in hex: %w", err)
+		}
 	}
 
 	plaintext, err := pack.Unpack(cpt, b, key)

@@ -1,3 +1,5 @@
+![dualbox logo](dualbox.jpg)
+
 # dualbox
 
 Encrypt given data all together by different keys and decrypt them depends on the given keys.
